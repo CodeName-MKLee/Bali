@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌴 2025 발리 여행 플래너</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Harmony (bg-gray-50, text-gray-700, with bg-teal-600 text-white accents) -->
+    <!-- Application Structure Plan: 기존의 선형적인 마크다운 보고서를 탭 기반의 인터랙티브 대시보드로 재설계했습니다. 사용자가 '일정', '예산', '추천', '중요 팁' 탭을 클릭하여 원하는 정보 섹션으로 즉시 이동할 수 있습니다. '일정' 탭은 타임라인을, '예산' 탭은 Chart.js를 사용한 시각적 비용 분석을, '추천' 탭은 숙소/맛집/마사지를 분류하여 보여주며, '중요 팁' 탭은 핵심 주의사항을 강조합니다. 이러한 비선형적, 과제 중심적(task-oriented) 구조는 사용자가 정보를 스크롤 없이 빠르게 탐색하고 소비할 수 있도록 하여 사용성을 극대화합니다. -->
+    <!-- Visualization & Content Choices: 1. 상세 일정(표): Goal(정보 전달) -> 반응형 HTML 테이블 -> 상호작용 없음 -> 타임라인 표시에 가장 명확함 -> HTML/Tailwind. 2. 예산(데이터): Goal(비교/요약) -> 도넛 차트 -> 호버 시 상세 내역 표시 -> 일별 지출 비중을 한눈에 파악 -> Chart.js(Canvas). 3. 추천 목록(텍스트): Goal(정리/분류) -> 중첩 탭 (숙소/맛집/마사지) -> 클릭 시 해당 목록 필터링 -> 기존 보고서의 지역별 분류보다 사용자에게 친숙한 유형별 분류 적용 -> JS/HTML/Tailwind. 4. 중요 팁(텍스트): Goal(경고/강조) -> 아이콘이 포함된 스타일링된 목록 -> 상호작용 없음 -> 중요 정보를 시각적으로 강조 -> HTML/Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            height: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-6xl">
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-teal-800 mb-2">🌴 2025년 연말 발리 여행</h1>
+            <p class="text-lg text-gray-600">5박 6일 인터랙티브 플래너 (12/26 ~ 12/31)</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8">
+            <button class="nav-button active-tab" data-tab="schedule">🗓️ 상세 일정</button>
+            <button class="nav-button" data-tab="budget">💰 예산 분석</button>
+            <button class="nav-button" data-tab="recommendations">🏨 추천 리스트</button>
+            <button class="nav-button" data-tab="tips">⚠️ 중요 팁</button>
+        </nav>
+
+        <main class="bg-white rounded-lg shadow-xl p-4 sm:p-6 lg:p-8 min-h-[60vh]">
+            
+            <section id="tab-schedule" class="page-content">
+                <h2 class="text-2xl font-bold text-teal-700 mb-4">🗓️ 상세 일정표</h2>
+                <p class="mb-6 text-gray-600">
+                    전체 5박 6일간의 일정을 시간대별로 정리했습니다. 우붓에서의 힐링부터 짱구의 활기찬 분위기, 그리고 워터봄에서의 액티비티까지 상세한 동선과 비용을 확인할 수 있습니다.
+                </p>
+                <div class="overflow-x-auto rounded-lg border">
+                    <table class="w-full min-w-max text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                            <tr>
+                                <th scope="col" class="py-3 px-4">날짜</th>
+                                <th scope="col" class="py-3 px-4">시간</th>
+                                <th scope="col" class="py-3 px-4">일정 및 활동</th>
+                                <th scope="col" class="py-3 px-4">예상 비용 (2인)</th>
+                                <th scope="col" class="py-3 px-4">비고</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4 font-medium" rowspan="3">12/26 (금)</td><td class="py-3 px-4">22:10</td><td class="py-3 px-4">발리 응우라라이 공항 도착</td><td class="py-3 px-4">-</td><td class="py-3 px-4">e-VOA 추천</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">23:30</td><td class="py-3 px-4">입국 심사 후 우붓으로 이동</td><td class="py-3 px-4">50,000원</td><td class="py-3 px-4">클룩/그랩 예약</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">01:00</td><td class="py-3 px-4">우붓 숙소 체크인 및 휴식</td><td class="py-3 px-4">-</td><td class="py-3 px-4">심야 체크인 확인</td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4 font-medium" rowspan="5">12/27 (토)</td><td class="py-3 px-4">09:00</td><td class="py-3 px-4">[액티비티] 아융강 래프팅</td><td class="py-3 px-4">80,000원</td><td class="py-3 px-4">픽업/점심 포함</td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">14:00</td><td class="py-3 px-4">숙소 복귀 후 샤워 및 재정비</td><td class="py-3 px-4">-</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">16:00</td><td class="py-3 px-4">우붓 왕궁 & 시장 구경 or 몽키포레스트</td><td class="py-3 px-4">20,000원</td><td class="py-3 px-4">입장료 등</td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">18:00</td><td class="py-3 px-4">저녁: 너티 누리스 와룽 (폭립)</td><td class="py-3 px-4">50,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">20:00</td><td class="py-3 px-4">마사지: 푸트리 우붓 스파 (90분)</td><td class="py-3 px-4">60,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4 font-medium" rowspan="5">12/28 (일)</td><td class="py-3 px-4">10:00</td><td class="py-3 px-4">조식 후 우붓 산책 & 체크아웃</td><td class="py-3 px-4">-</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">12:00</td><td class="py-3 px-4">점심: 피손 우붓 (브런치)</td><td class="py-3 px-4">40,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">13:30</td><td class="py-3 px-4">우붓 ➔ 짱구 이동 (차량)</td><td class="py-3 px-4">35,000원</td><td class="py-3 px-4">약 1.5시간 소요</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">15:00</td><td class="py-3 px-4">짱구 숙소 체크인</td><td class="py-3 px-4">-</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">17:00</td><td class="py-3 px-4">라 브리사 (La Brisa) 선셋</td><td class="py-3 px-4">60,000원</td><td class="py-3 px-4">미니멈 차지 고려</td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4 font-medium" rowspan="4">12/29 (월)</td><td class="py-3 px-4">10:00</td><td class="py-3 px-4">조식: 크레이트 카페</td><td class="py-3 px-4">25,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">12:00</td><td class="py-3 px-4">짱구 쇼핑 (러브앵커 마켓 등)</td><td class="py-3 px-4">-</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">15:00</td><td class="py-3 px-4">마사지: 토닉 데이 스파</td><td class="py-3 px-4">70,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">17:30</td><td class="py-3 px-4">핀스 비치 클럽 or 아틀라스</td><td class="py-3 px-4">150,000원</td><td class="py-3 px-4">데이베드 예약</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4 font-medium" rowspan="4">12/30 (화)</td><td class="py-3 px-4">09:30</td><td class="py-3 px-4">짱구 ➔ 쿠타 (워터봄) 이동</td><td class="py-3 px-4">15,000원</td><td class="py-3 px-4">그랩/고젝</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">10:30</td><td class="py-3 px-4">[액티비티] 워터봄 발리</td><td class="py-3 px-4">120,000원</td><td class="py-3 px-4">입장료+식사+라커</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">16:00</td><td class="py-3 px-4">워터봄 종료 후 짱구 복귀</td><td class="py-3 px-4">15,000원</td><td class="py-3 px-4">퇴근길 정체 주의</td></tr>
+                            <tr class="bg-white hover:bg-gray-50"><td class="py-3 px-4">19:00</td><td class="py-3 px-4">저녁: 페니 레인 (양식)</td><td class="py-3 px-4">50,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4 font-medium" rowspan="5">12/31 (수)</td><td class="py-3 px-4">10:00</td><td class="py-3 px-4">체크아웃 (짐 보관)</td><td class="py-3 px-4">-</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">11:00</td><td class="py-3 px-4">브런치 & 타나롯 사원 (선택)</td><td class="py-3 px-4">50,000원</td><td class="py-3 px-4"></td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">15:00</td><td class="py-3 px-4">마지막 마사지 & 샤워</td><td class="py-3 px-4">60,000원</td><td class="py-3 px-4">공항 가기 전</td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4 font-bold text-red-600">17:00</td><td class="py-3 px-4 font-bold text-red-600">공항으로 출발 (필수)</td><td class="py-3 px-4">30,000원</td><td class="py-3 px-4">12/31 교통체증 극심</td></tr>
+                            <tr class="bg-gray-50 hover:bg-gray-100"><td class="py-3 px-4">19:00</td><td class="py-3 px-4">공항 도착 및 출국 수속</td><td class="py-3 px-4">30,000원</td><td class="py-3 px-4">공항 내 식사</td></tr>
+                        </tbody>
+                        <tfoot class="bg-gray-100 font-medium">
+                            <tr>
+                                <td colspan="3" class="py-3 px-4 text-right">총계 (항공/숙박 제외)</td>
+                                <td colspan="2" class="py-3 px-4 text-lg text-teal-700">약 1,050,000원</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </section>
+
+            <section id="tab-budget" class="page-content hidden">
+                <h2 class="text-2xl font-bold text-teal-700 mb-4">💰 예산 분석</h2>
+                <p class="mb-6 text-gray-600">
+                    항공권과 숙박비를 제외한 현지 체류 비용(2인 기준)을 시각화했습니다. 총예산은 약 1,050,000원이며, 차트에 마우스를 올리면 일별 상세 지출 내역을 확인할 수 있습니다. 액티비티와 비치클럽 방문이 있는 날에 지출이 높은 것을 볼 수 있습니다.
+                </p>
+                <div class="chart-container">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+            </section>
+
+            <section id="tab-recommendations" class="page-content hidden">
+                <h2 class="text-2xl font-bold text-teal-700 mb-4">🏨 추천 리스트</h2>
+                 <p class="mb-6 text-gray-600">
+                    우붓과 짱구 지역의 숙소, 맛집, 마사지 스파 추천 리스트입니다. 아래 탭을 클릭하여 원하는 카테고리의 추천 장소를 확인해 보세요.
+                </p>
+                
+                <div class="mb-4 border-b border-gray-200">
+                    <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                        <button class="subnav-button active-subtab" data-subtab="hotels">🏨 숙소</button>
+                        <button class="subnav-button" data-subtab="food">🍽️ 맛집</button>
+                        <button class="subnav-button" data-subtab="massage">💆 마사지</button>
+                    </nav>
+                </div>
+
+                <div id="subtab-hotels" class="sub-page-content grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">📍 우붓 (Ubud)</h3>
+                        <p class="text-sm text-gray-600 mb-4">비스마 거리(Jl. Bisma) 근처는 조용하면서도 중심가 이동이 편리하고 논뷰가 예쁜 숙소가 많습니다. 26일 늦은 도착이므로 24시간 체크인이 가능한지 확인하세요.</p>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>코마네카 앳 비스마:</strong> 고급스럽고 훌륭한 숲 뷰</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>비스마 에이트:</strong> 현대적인 감각의 부티크 호텔</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>알라야 리조트:</strong> 몽키 포레스트 옆, 가성비와 위치 훌륭</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">📍 짱구 (Canggu)</h3>
+                        <p class="text-sm text-gray-600 mb-4">바투 볼롱(Batu Bolong) 메인 거리 근처가 맛집, 카페, 비치클럽 접근성이 가장 좋습니다. 30일 워터봄(쿠타) 및 31일 공항 이동을 고려한 위치입니다.</p>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>아스톤 짱구 비치 리조트:</strong> 바다 바로 앞, 루프탑 수영장</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>이스트웰라:</strong> 가성비 좋고 편리한 위치</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>코모 우마 짱구:</strong> 럭셔리 휴양에 추천</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="subtab-food" class="sub-page-content hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">🍃 우붓 (Ubud)</h3>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>너티 누리스 와룽:</strong> 우붓 필수 코스, 폭립 바베큐 맛집</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>후잔 로컬:</strong> 고급 인도네시아 퓨전 요리 (예약 추천)</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>피손 (Pison):</strong> 논뷰가 예쁜 브런치 & 커피 맛집</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">🌊 짱구 (Canggu)</h3>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>크레이트 카페:</strong> 짱구 브런치의 성지, 힙한 분위기</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>페니 레인:</strong> 화려한 인테리어의 사진 맛집 (양식)</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>와룽 시카:</strong> 저렴하고 맛있는 현지식 나시짬뿌르</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="subtab-massage" class="sub-page-content hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">🍃 우붓 (Ubud)</h3>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>카르사 스파:</strong> <span class="font-bold text-red-600">필수 예약.</span> 최고의 뷰와 실력 (논길 산책로)</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>푸트리 우붓 스파:</strong> 가성비, 플라워 배스(꽃잎 목욕) 유명</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">🌊 짱구 (Canggu)</h3>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>토닉 데이 스파:</strong> 가장 인기 있는 깔끔한 마사지샵 (예약 권장)</li>
+                            <li class="p-3 bg-gray-50 rounded-lg shadow-sm"><strong>골드 더스트:</strong> 24K 골드 페이셜 마사지로 유명</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-tips" class="page-content hidden">
+                <h2 class="text-2xl font-bold text-teal-700 mb-4">⚠️ 중요 팁 (꿀팁)</h2>
+                <p class="mb-6 text-gray-600">
+                    여행 전 반드시 확인해야 할 핵심 팁입니다. 특히 12월 31일 교통 상황은 매우 중요하니 꼭 숙지하세요.
+                </p>
+                <ul class="space-y-4">
+                    <li class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-red-700 text-lg">🚨 12월 31일(새해 전야) 교통 마비</h3>
+                        <p class="text-red-600">짱구, 스미냑, 쿠타 지역은 저녁부터 도로가 통제되거나 파티 인파로 마비됩니다. 23:10 비행기라도 **오후 5시(17:00)에는 짱구에서 공항으로 출발**하는 것을 강력히 추천합니다. 평소보다 1~2시간 이상 더 걸릴 수 있습니다.</p>
+                    </li>
+                    <li class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-blue-700 text-lg">🚣 래프팅 (12/27)</h3>
+                        <p class="text-blue-600">12월은 우기라 수량이 풍부해 래프팅이 더 재미있습니다. 비가 와도 진행하니 젖어도 되는 옷과 샌들을 준비하세요.</p>
+                    </li>
+                    <li class="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-green-700 text-lg">💳 워터봄 & 결제</h3>
+                        <p class="text-green-600">워터봄 내에서는 현금 대신 충전식 팔찌(손목 밴드)를 사용합니다. 남은 금액은 퇴장 시 환불됩니다. 또한, 대부분의 식당과 마트에서 트래블월렛/트래블로그 카드가 유용하지만, 로컬 식당(와룽)이나 마켓은 현금이 필요할 수 있습니다.</p>
+                    </li>
+                    <li class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-yellow-700 text-lg">📄 e-VOA (전자 도착 비자)</h3>
+                        <p class="text-yellow-600">공항 도착 후 비자 발급 줄을 서지 않으려면, 한국에서 미리 e-VOA를 신청하고 결제해 가세요. 입국 시간이 훨씬 빨라집니다.</p>
+                    </li>
+                </ul>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainTabs = document.querySelectorAll('.nav-button');
+            const mainContents = document.querySelectorAll('.page-content');
+            const subTabs = document.querySelectorAll('.subnav-button');
+            const subContents = document.querySelectorAll('.sub-page-content');
+
+            function switchTabs(tabs, contents, clickedTab, activeClass) {
+                const targetId = clickedTab.dataset.tab || clickedTab.dataset.subtab;
+                
+                tabs.forEach(tab => {
+                    tab.classList.remove(activeClass);
+                    tab.classList.remove('font-semibold', 'border-teal-500', 'text-teal-600');
+                    if (tab.classList.contains('active-tab')) {
+                        tab.classList.remove('active-tab');
+                    }
+                });
+                
+                clickedTab.classList.add(activeClass);
+                if (activeClass === 'active-tab') {
+                    clickedTab.classList.add('active-tab');
+                } else {
+                    clickedTab.classList.add('font-semibold', 'border-teal-500', 'text-teal-600');
+                }
+                
+                contents.forEach(content => {
+                    if (content.id === `tab-${targetId}` || content.id === `subtab-${targetId}`) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+            }
+
+            mainTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTabs(mainTabs, mainContents, tab, 'active-tab');
+                });
+            });
+
+            subTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTabs(subTabs, subContents, tab, 'active-subtab');
+                });
+            });
+
+            const budgetCtx = document.getElementById('budgetChart');
+            if (budgetCtx) {
+                const budgetData = {
+                    labels: ['12/26 (도착/이동)', '12/27 (래프팅/우붓)', '12/28 (이동/선셋)', '12/29 (비치클럽)', '12/30 (워터봄)', '12/31 (공항/출국)'],
+                    datasets: [{
+                        label: '일별 예상 지출 (2인)',
+                        data: [50000, 210000, 175000, 245000, 200000, 170000],
+                        backgroundColor: [
+                            '#CCFBF1', '#99F6E4', '#5EEAD4', '#2DD4BF', '#14B8A6', '#0D9488'
+                        ],
+                        borderColor: '#0F766E',
+                        borderWidth: 1,
+                        hoverOffset: 4
+                    }]
+                };
+
+                new Chart(budgetCtx, {
+                    type: 'doughnut',
+                    data: budgetData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 10 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(context.parsed);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            teal: {
+                                50: '#F0FDFA', 100: '#CCFBF1', 200: '#99F6E4', 300: '#5EEAD4', 400: '#2DD4BF', 500: '#14B8A6', 600: '#0D9488', 700: '#0F766E', 800: '#115E59', 900: '#134E4A'
+                            }
+                        }
+                    }
+                }
+            };
+
+            const style = document.createElement('style');
+            style.textContent = `
+                .nav-button {
+                    padding: 0.5rem 1rem;
+                    border-radius: 9999px;
+                    font-weight: 500;
+                    color: #374151;
+                    background-color: #F3F4F6;
+                    transition: all 0.2s ease-in-out;
+                    border: 2px solid transparent;
+                }
+                .nav-button:hover {
+                    background-color: #E5E7EB;
+                    border-color: #0D9488;
+                }
+                .nav-button.active-tab {
+                    background-color: #0D9488;
+                    color: #FFFFFF;
+                    font-weight: 600;
+                    border-color: #0D9488;
+                }
+                
+                .subnav-button {
+                    padding: 0.75rem 1rem;
+                    font-weight: 500;
+                    color: #4B5563;
+                    border-bottom: 3px solid transparent;
+                    transition: all 0.2s ease-in-out;
+                }
+                .subnav-button:hover {
+                    color: #0F766E;
+                    border-bottom-color: #99F6E4;
+                }
+                .subnav-button.active-subtab {
+                    font-weight: 600;
+                    color: #0D9488;
+                    border-bottom-color: #0D9488;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
